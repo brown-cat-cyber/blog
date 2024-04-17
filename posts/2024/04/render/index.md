@@ -8,7 +8,7 @@
 2. React 会保留相同位置相同类型的组件的状态
 3. 为什么数组遍历需要 key 属性
 
-刚开始学习的时候，我只是盲目地遵从着 eslint 的报错提示，心里觉得很生硬；等熟悉 React 后，我才明白了它们的原因。接下来我将尝试分别解释这三条规则的必要性，而到最后，大家将会明白它们都是因 React 的渲染机制而起。解释过程中我并不会引入 fiber 以及更底层的 React 技术细节概念，因为一是我希望文章总是能被更多人阅读，尽量保持简洁，非必要不抬高门槛。二是我觉得底层实现细节和这些规则实际上并没有直接关系，引入它们反而会制造噪音。对于想要了解更多（乃至从头实现一个 React）的朋友，我在文章结尾给出了一些我搜集到的拓展阅读。
+刚开始学习的时候，我只是盲目地遵从着 eslint 的报错提示，心里觉得很生硬；等熟悉 React 后，我才明白了它们的原因。接下来我将尝试分别解释这三条规则的必要性，而到最后，大家将会明白它们都是因 React 的渲染机制而起。解释过程中我并不会引入 fiber 以及更底层的 React 技术细节概念，因为一是我希望文章总是能被更多人阅读，尽量保持简洁，降低门槛。二是我觉得底层实现细节和这些规则实际上并没有直接关系，引入它们反而会制造噪音。对于想要了解更多（乃至从头实现一个 React）的朋友，我在文章结尾给出了一些我搜集到的拓展阅读。
 
 ## React 的渲染过程
 
@@ -233,7 +233,7 @@ function Counter({ isFancy }) {
 }
 ```
 
-当 React 看到返回的这两个 jsx 时，它同样没法判断这还是不是同一个 counter。但这个时候 React 多了另一个信息——它们的*组件名*是相同的。**出于性能考虑，React 会默认这还是同一个组件，这样就可以仅更新这个组件的属性而非重新挂载这个组件。**（在这个案例中， React 计算以及提交虚拟 dom 时，仅需浏览器更新 div 的 class，而非删除掉这个 div 后再重新创建并添加一个 div）
+当 React 看到返回的这两个 jsx 时，它同样没法判断这还是不是同一个 counter[^2]。但这个时候 React 多了另一个信息——它们的*组件名*是相同的。**出于性能考虑，React 会默认这还是同一个组件，这样就可以仅更新这个组件的属性而非重新挂载这个组件。**（在这个案例中， React 计算以及提交虚拟 dom 时，仅需浏览器更新 div 的 class，而非删除掉这个 div 后再重新创建并添加一个 div）
 那如何让 React 认识到这并不是同一个组件呢？这就是 key 属性的作用，它作为组件的唯一标识，类似于数据库中的 id。有了它，React 就不用再借助位置、名称类型来判断组件的同一性了，所以我们可以[通过设置不同的 key 来重制掉同一类型同一位置组件的状态](https://react.dev/learn/preserving-and-resetting-state#option-2-resetting-state-with-a-key)。
 
 ## 为什么 React 会要求开发者给 jsx 中的数组项加上 key 属性
@@ -245,4 +245,26 @@ function Counter({ isFancy }) {
 
 其实这三个问题最后都可以归结为“React 如何比较重复执行组件函数的不同结果”，如果没有标识符 key，React 就只能根据顺序去识别不同的 hooks 和组件。无论 React 框架底层细节是如何实现的，只要 React 遵循*每次渲染时都执行一遍组件函数来生成 UI 结果，而非把它当成一种初始化模板*的做法，那就肯定会出现这些问题。
 
-[^1]: 这里的挂载指的是 React 将元素添加到虚拟 dom 上；下文的重新渲染（rerender）则是指 React 在状态更新后重新计算虚拟 dom 的过程
+[^1]: 这里的挂载指的是 React 将组件添加到虚拟 dom 上；下文的重新渲染（rerender）则是指 React 在状态更新后重新计算虚拟 dom 的过程
+[^2]: React 官方教程中有一个看起来和本文结论冲突的[例子](https://react.dev/learn/preserving-and-resetting-state#option-1-rendering-a-component-in-different-positions)，例子中两个 Counter 看上去在同样的位置却并不共享同一个状态，这是因为，Scoreboard 执行的结果实际上是这样的：
+
+```javascript
+export default function Scoreboard() {
+  const [isPlayerA, setIsPlayerA] = useState(true);
+  return (
+    <div>
+      {false}
+      {true && <Counter person="Sarah" />}
+      <button
+        onClick={() => {
+          setIsPlayerA(!isPlayerA);
+        }}
+      >
+        Next player!
+      </button>
+    </div>
+  );
+}
+```
+
+只是 React 帮你处理掉了 false 而已
