@@ -1,14 +1,14 @@
-# 从为什么不要把 React hooks 写在条件语句中说起
+# 从为什么不要把 React Hooks 写在条件语句中说起
 
 ## 引子
 
 对 React 的初学者来说，除去 useEffect 这个大坑，React 还有不少看起来有些诡异的规则，比如
 
-1. 不要把 React hooks 写在条件语句中
+1. 不要把 React Hooks 写在条件语句中
 2. React 会保留相同位置相同类型的组件的状态
 3. 为什么数组遍历需要 key 属性
 
-刚开始学习的时候，我只是盲目地遵从着 eslint 的报错提示，心里觉得很生硬；等熟悉 React 后，我才明白了它们的原因。接下来我将尝试分别解释这三条规则的必要性，而到最后，大家将会明白它们都是因 React 的渲染机制而起。解释过程中我并不会引入 fiber 以及更底层的 React 技术细节概念，因为一是我希望文章总是能被更多人阅读，尽量保持简洁，降低门槛。二是我觉得底层实现细节和这些规则实际上并没有直接关系，引入它们反而会制造噪音。对于想要了解更多（乃至从头实现一个 React）的朋友，我在文章结尾给出了一些我搜集到的拓展阅读。
+刚开始学习的时候，我只是盲目地遵从着 eslint 的报错提示，心里觉得很生硬；等熟悉 React 后，我才明白了它们的原因。接下来我将尝试分别解释这三条规则的必要性，而到最后，大家将会明白它们都是因 React 的渲染机制而起。解释过程中我并不会引入 iber 以及更底层的 React 技术细节概念，因为一是我希望文章总是能被更多人阅读，尽量保持简洁，降低门槛。二是我觉得底层实现细节和这些规则实际上并没有直接关系，引入它们反而会制造噪音。对于想要了解更多（乃至从头实现一个 React）的朋友，我在文章结尾给出了一些我搜集到的拓展阅读。
 
 ## React 的渲染过程
 
@@ -153,8 +153,8 @@ export default function Form() {
 ```
 
 从这个视角看，在条件判断中使用 hook 带来的问题就呼之欲出了：请问调用这唯一的`useState`获取的是代表"firstName"的那个状态，还是代表"lastName"的那个状态？我们没有办法判断，我们只看到了一个 useState。
-不仅仅有这个限制，[官方文档](https://React.dev/reference/rules/rules-of-hooks)还列出了诸如不要在循环、嵌套函数、try/catch 代码块中使用 hooks 的规则，这些规则被归纳为“仅在顶层调用 hooks”。它们的原因都是类似的：**在多次函数执行中，区分 hooks 的唯一办法就是它们的调用顺序，因此要避免一切*有可能*打乱顺序的行为**。
-这里提一下，我在写这篇文章的时候查询了一些资料，其中很多都有一个大概这样的总结“因为 React 用一个链表（自制 React 则多用数组）来储存 hooks 的状态，所以必须要保证它的调用顺序与链表/数组中的排序一致”。这个说法不能说错，但我觉得可能过于聚焦于技术细节了。**问题不是 React 用什么数据结构去储存 hooks，问题在于，只要 React 每当状态变更就重新执行一遍组件函数，只要每次执行函数都会重新调用一遍 hooks，那在没有 key、id 等标识符的情况下，React 就只能凭借在函数中的调用顺序去辨认不同的 hooks。**
+不仅仅有这个限制，[官方文档](https://React.dev/reference/rules/rules-of-Hooks)还列出了诸如不要在循环、嵌套函数、try/catch 代码块中使用 Hooks 的规则，这些规则被归纳为“仅在顶层调用 hooks”。它们的原因都是类似的：**在多次函数执行中，区分 Hooks 的唯一办法就是它们的调用顺序，因此要避免一切*有可能*打乱顺序的行为**。
+这里提一下，我在写这篇文章的时候查询了一些资料，其中很多都有一个大概这样的总结“因为 React 用一个链表（自制 React 则多用数组）来储存 Hooks 的状态，所以必须要保证它的调用顺序与链表/数组中的排序一致”。这个说法不能说错，但我觉得可能过于聚焦于技术细节了。**问题不是 React 用什么数据结构去储存 hooks，问题在于，只要 React 每当状态变更就重新执行一遍组件函数，只要每次执行函数都会重新调用一遍 hooks，那在没有 key、id 等标识符的情况下，React 就只能凭借在函数中的调用顺序去辨认不同的 hooks。**
 这里提到了 key ，这也是另外两个问题的关键。
 
 ## 为什么 React 会保留相同位置相同类型的组件的状态
@@ -243,11 +243,13 @@ function Counter({ isFancy }) {
 
 ## 总结
 
-其实这三个问题最后都可以归结为“React 如何比较重复执行组件函数的不同结果”，如果没有标识符 key，React 就只能根据顺序去识别不同的 hooks 和组件。无论 React 框架底层细节是如何实现的，只要 React 遵循*每次渲染时都执行一遍组件函数来生成 UI 结果，而非把它当成一种初始化模板*的做法，那就肯定会出现这些问题。
+其实这三个问题最后都可以归结为“React 如何比较重复执行组件函数的不同结果”，如果没有标识符 key，React 就只能根据顺序去识别不同的 Hooks 和组件。无论 React 框架底层细节是如何实现的，只要 React 遵循*每次渲染时都执行一遍组件函数来生成 UI 结果，而非把它当成一种初始化模板*的做法，那就肯定会出现这些问题。
 
 ## 拓展资料
 
-1. Build your own React，从认识 JSX 开始搭建 React。
+1. [掌握 React Reconciliation](https://www.youtube.com/watch?v=cyAbjx0mfKM&ab_channel=DeveloperWay)，用丰富的图片和动画展示 React Reconciliation。
+2. [搭建你自己的 React](https://pomb.us/build-your-own-react/)，从认识 JSX 开始搭建 React。
+3. [深入 React Hooks 和 Fiber](https://dev.to/mattia/react-hooks-and-fiber-deep-diving-gi1)，通过对源码的调试更深入地解析 React 重新渲染的过程。
 
 [^1]: 这里的*挂载（mount）*指的是 React 将组件添加到虚拟 dom 上；下文的*重新渲染（rerender）*则是指 React 在状态更新后重新计算虚拟 dom 的过程
 [^2]: React 官方教程中有一个看起来和本文结论冲突的[例子](https://react.dev/learn/preserving-and-resetting-state#option-1-rendering-a-component-in-different-positions)，例子中两个 Counter 看上去在同样的位置却并不共享同一个状态，这是因为，其中一个语句的结果是`{false}`，仍然占用一个位置，只是 React 帮你处理掉了而已。
