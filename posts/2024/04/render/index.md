@@ -1,8 +1,7 @@
 ---
-title: how to get things done
-description: this is greate
-tags: money, income, coding
-conver_image: ayobami.jpg
+title: 从为什么不要把 React Hooks 写在条件语句中说起（不需要涉及源码）
+description: 从为什么不要把 React Hooks 写在条件语句中说起，熟悉 React 的渲染机制
+tags: React, Hooks, 渲染，rerender
 ---
 
 ## 引子
