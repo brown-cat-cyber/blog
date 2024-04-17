@@ -247,7 +247,7 @@ function Counter({ isFancy }) {
 
 ## 拓展资料
 
-1. [掌握 React Reconciliation](https://www.youtube.com/watch?v=cyAbjx0mfKM&ab_channel=DeveloperWay)，用丰富的图片和动画展示 React Reconciliation。
+1. [掌握 React Reconciliation](https://www.youtube.com/watch?v=cyAbjx0mfKM&ab_channel=DeveloperWay)，用丰富的图片和动画展示 React Reconciliation，这个系列都很不错，推荐新手巩固。
 2. [搭建你自己的 React](https://pomb.us/build-your-own-react/)，从认识 JSX 开始搭建 React。有[中文翻译](https://github.com/chinanf-boy/didact-explain#5-fibre-%E9%80%92%E5%A2%9E%E5%AF%B9%E6%AF%94)，但没有更新 Hooks 篇。
 3. [深入 React Hooks 和 Fiber](https://dev.to/mattia/react-hooks-and-fiber-deep-diving-gi1)，通过对源码的调试更深入地解析 React 重新渲染的过程。
 
