@@ -1,6 +1,6 @@
 ---
 title: 从为什么不要把 React Hooks 写在条件语句中说起（不需要涉及源码）
-description: 从为什么不要把 React Hooks 写在条件语句中说起，熟悉 React 的渲染机制
+description: 从为什么不要把 React Hooks 写在条件语句中说起，通过 React 的渲染机制解释 React 的一些奇怪规则
 tags: React, Hooks, 渲染，rerender
 ---
 
@@ -256,4 +256,4 @@ function Counter({ isFancy }) {
 3. [深入 React Hooks 和 Fiber](https://dev.to/mattia/react-hooks-and-fiber-deep-diving-gi1)，通过对源码的调试更深入地解析 React 重新渲染的过程。
 
 [^1]: 这里的 _挂载（mount）_ 指的是 React 将组件添加到虚拟 dom 上；下文的 _重新渲染（rerender）_ 则是指 React 在状态更新后重新计算虚拟 dom 的过程
-[^2]: React 官方教程中有一个看起来和本文结论冲突的[例子](https://react.dev/learn/preserving-and-resetting-state#option-1-rendering-a-component-in-different-positions)，例子中两个 Counter 看上去在同样的位置却并不共享同一个状态，这是因为，其中一个语句的结果是`{false}`，仍然占用一个位置，只是 React 帮你处理掉了而已。
+[^2]: React 官方教程中有一个看起来和本文结论冲突的[例子](https://react.dev/learn/preserving-and-resetting-state#option-1-rendering-a-component-in-different-positions)，例子中两个 Counter 看上去在同样的位置却并不共享同一个状态，这是因为其中一个语句的结果是`{false}`，仍然占用一个位置，只是 React 帮你处理掉了而已。
