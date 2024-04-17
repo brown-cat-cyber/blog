@@ -27,7 +27,7 @@ export default function Counter() {
 }
 ```
 
-当这个*组件函数*(`function Counter`)第一次执行，即 React 挂载 Counter 组件时，*组件函数*第一次执行`useState`函数，执行后 React 给相对应的组件注册一个`useState`hook，并初始化 state；useState 最后返回当前 state 的值，以及一个对 state 进行更改的 `setState` 函数。函数组件在最后返回的 jsx 将 `setState` 绑定到 button 的点击事件中。当用户点击 button 时，setState 触发 rerender，React 再一次执行了这个*组件函数*，执行过程中再一次运行`useState`函数，更新 state，并返回最新的值，React 将其填充到 jsx 中，最后更新视图。
+当这个*组件函数*(`function Counter`)第一次执行，即 React 挂载 Counter 组件时，*组件函数*第一次执行`useState`函数，执行后 React 给相对应的组件注册一个`useState`hook，并初始化 state；useState 最后返回当前 state 的值，以及一个对 state 进行更改的 `setState` 函数。函数组件在最后返回的 jsx 将 `setState` 绑定到 button 的点击事件中。当用户点击 button 时，setState 触发重新渲染（rerender），React 再一次执行了这个*组件函数*，执行过程中再一次运行`useState`函数，更新 state，并返回最新的值，React 将其填充到 jsx 中，最后更新视图。
 整个过程最重要的其实就一点：**每次用 `setState` 更改状态的时候，React 都会重新执行整个组件函数**。
 
 ## 为什么不要在条件判断中使用 hook
@@ -233,7 +233,7 @@ function Counter({ isFancy }) {
 }
 ```
 
-当 React 看到返回的这两个 jsx 时，它同样没法判断这还是不是同一个 counter。但这个时候 React 多了另一个信息——它们的*组件名*是相同的。**出于性能考虑，React 会默认这还是同一个组件，这样就可以仅更新这个组件的属性而非重新挂载这个组件。**（在这个案例中，当 React 计算以及提交虚拟 dom 时，浏览器仅需更新 div 的 class，而非删除掉这个 div 后再重新创建并添加一个 div）
+当 React 看到返回的这两个 jsx 时，它同样没法判断这还是不是同一个 counter。但这个时候 React 多了另一个信息——它们的*组件名*是相同的。**出于性能考虑，React 会默认这还是同一个组件，这样就可以仅更新这个组件的属性而非重新挂载这个组件。**（在这个案例中， React 计算以及提交虚拟 dom 时，仅需浏览器更新 div 的 class，而非删除掉这个 div 后再重新创建并添加一个 div）
 那如何让 React 认识到这并不是同一个组件呢？这就是 key 属性的作用，它作为组件的唯一标识，类似于数据库中的 id。有了它，React 就不用再借助位置、名称类型来判断组件的同一性了，所以我们可以[通过设置不同的 key 来重制掉同一类型同一位置组件的状态](https://react.dev/learn/preserving-and-resetting-state#option-2-resetting-state-with-a-key)。
 
 ## 为什么 React 会要求开发者给 jsx 中的数组项加上 key 属性
