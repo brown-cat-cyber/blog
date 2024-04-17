@@ -5,8 +5,6 @@ tags: money, income, coding
 conver_image: ayobami.jpg
 ---
 
-# 从为什么不要把 React Hooks 写在条件语句中说起（不需要涉及源码）
-
 ## 引子
 
 对 React 的初学者来说，除去 useEffect 这个大坑，React 还有不少看起来有些诡异的规则，比如
