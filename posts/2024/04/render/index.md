@@ -27,7 +27,7 @@ export default function Counter() {
 }
 ```
 
-当这个*组件函数*(`function Counter`)第一次执行，即 React 挂载[^1] Counter 组件时，*组件函数*第一次执行`useState`函数，执行后 React 给相对应的组件注册一个`useState`hook，并初始化 state；useState 最后返回当前 state 的值，以及一个对 state 进行更改的 `setState` 函数。函数组件在最后返回的 jsx 将 `setState` 绑定到 button 的点击事件中。当用户点击 button 时，setState 触发重新渲染（rerender），React 再一次执行了这个*组件函数*，执行过程中再一次运行`useState`函数，更新 state，并返回最新的值，React 将其填充到 jsx 中，最后更新视图。
+当这个*组件函数*(`function Counter`)第一次执行，即 React 挂载[^1] Counter 组件时，*组件函数*第一次执行`useState`函数，执行后 React 给相对应的组件注册一个`useState`hook，并初始化 state；useState 最后返回当前 state 的值，以及一个对 state 进行更改的 `setState` 函数。函数组件在最后返回的 JSX 将 `setState` 绑定到 button 的点击事件中。当用户点击 button 时，setState 触发重新渲染（rerender），React 再一次执行了这个*组件函数*，执行过程中再一次运行`useState`函数，更新 state，并返回最新的值，React 将其填充到 JSX 中，最后更新视图。
 整个过程最重要的其实就一点：**每次用 `setState` 更改状态的时候，React 都会重新执行整个组件函数**。
 
 ## 为什么不要在条件判断中使用 hook
@@ -159,7 +159,7 @@ export default function Form() {
 
 ## 为什么 React 会保留相同位置相同类型的组件的状态
 
-为什么 React 会保留相同位置相同类型的组件的状态？让我们看看另外一个例子（摘自[官方文档](https://React.dev/learn/preserving-and-resetting-state)），继续观察组件函数的执行结果，但这次关注返回的 jsx 部分。
+为什么 React 会保留相同位置相同类型的组件的状态？让我们看看另外一个例子（摘自[官方文档](https://React.dev/learn/preserving-and-resetting-state)），继续观察组件函数的执行结果，但这次关注返回的 JSX 部分。
 
 ```javascript
 
@@ -233,17 +233,21 @@ function Counter({ isFancy }) {
 }
 ```
 
-当 React 看到返回的这两个 jsx 时，它同样没法判断这还是不是同一个 counter[^2]。但这个时候 React 多了另一个信息——它们的*组件名*是相同的。**出于性能考虑，React 会默认这还是同一个组件，这样就可以仅更新这个组件的属性而非重新挂载这个组件。**（在这个案例中， React 计算以及提交虚拟 dom 时，仅需浏览器更新 div 的 class，而非删除掉这个 div 后再重新创建并添加一个 div）
+当 React 看到返回的这两个 JSX 时，它同样没法判断这还是不是同一个 counter[^2]。但这个时候 React 多了另一个信息——它们的*组件名*是相同的。**出于性能考虑，React 会默认这还是同一个组件，这样就可以仅更新这个组件的属性而非重新挂载这个组件。**（在这个案例中， React 计算以及提交虚拟 dom 时，仅需浏览器更新 div 的 class，而非删除掉这个 div 后再重新创建并添加一个 div）
 那如何让 React 认识到这并不是同一个组件呢？这就是 key 属性的作用，它作为组件的唯一标识，类似于数据库中的 id。有了它，React 就不用再借助位置、名称类型来判断组件的同一性了，所以我们可以[通过设置不同的 key 来重制掉同一类型同一位置组件的状态](https://react.dev/learn/preserving-and-resetting-state#option-2-resetting-state-with-a-key)。
 
-## 为什么 React 会要求开发者给 jsx 中的数组项加上 key 属性
+## 为什么 React 会要求开发者给 JSX 中的数组项加上 key 属性
 
-有了前面的铺垫，我们就可以很顺利地解释第三个规则——为什么 React 会要求开发者给 jsx 中的数组项加上 key 属性？
-因为相比于其它固定的代码，用来 map 的数组在 jsx 中是一个非常不稳定的结构，它随时有可能受 state 和 prop 的影响而增减数组项，因此数组项的顺序（index）在数组中并不是一个稳定的标识。这个时候，**React 为了避免重复挂载数组项，就必须要有一个唯一而稳定的标识去区分它们，将它们与上一次快照中的数组项一一对应。**（所以为什么不能把 index 作为 key 呢？因为这样你等于没有告诉 React 任何新的信息啊，React 不需要你告诉它 index，它看得出来……）
+有了前面的铺垫，我们就可以很顺利地解释第三个规则——为什么 React 会要求开发者给 JSX 中的数组项加上 key 属性？
+因为相比于其它固定的代码，用来 map 的数组在 JSX 中是一个非常不稳定的结构，它随时有可能受 state 和 prop 的影响而增减数组项，因此数组项的顺序（index）在数组中并不是一个稳定的标识。这个时候，**React 为了避免重复挂载数组项，就必须要有一个唯一而稳定的标识去区分它们，将它们与上一次快照中的数组项一一对应。**（所以为什么不能把 index 作为 key 呢？因为这样你等于没有告诉 React 任何新的信息啊，React 不需要你告诉它 index，它看得出来……）
 
 ## 总结
 
 其实这三个问题最后都可以归结为“React 如何比较重复执行组件函数的不同结果”，如果没有标识符 key，React 就只能根据顺序去识别不同的 hooks 和组件。无论 React 框架底层细节是如何实现的，只要 React 遵循*每次渲染时都执行一遍组件函数来生成 UI 结果，而非把它当成一种初始化模板*的做法，那就肯定会出现这些问题。
+
+## 拓展资料
+
+1. Build your own React，从认识 JSX 开始搭建 React。
 
 [^1]: 这里的*挂载（mount）*指的是 React 将组件添加到虚拟 dom 上；下文的*重新渲染（rerender）*则是指 React 在状态更新后重新计算虚拟 dom 的过程
 [^2]: React 官方教程中有一个看起来和本文结论冲突的[例子](https://react.dev/learn/preserving-and-resetting-state#option-1-rendering-a-component-in-different-positions)，例子中两个 Counter 看上去在同样的位置却并不共享同一个状态，这是因为，其中一个语句的结果是`{false}`，仍然占用一个位置，只是 React 帮你处理掉了而已。
