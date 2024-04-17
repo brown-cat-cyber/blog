@@ -27,7 +27,7 @@ export default function Counter() {
 }
 ```
 
-当这个*组件函数*(`function Counter`)第一次执行，即 React 挂载 Counter 组件时，*组件函数*第一次执行`useState`函数，执行后 React 给相对应的组件注册一个`useState`hook，并初始化 state；useState 最后返回当前 state 的值，以及一个对 state 进行更改的 `setState` 函数。函数组件在最后返回的 jsx 将 `setState` 绑定到 button 的点击事件中。当用户点击 button 时，setState 触发重新渲染（rerender），React 再一次执行了这个*组件函数*，执行过程中再一次运行`useState`函数，更新 state，并返回最新的值，React 将其填充到 jsx 中，最后更新视图。
+当这个*组件函数*(`function Counter`)第一次执行，即 React 挂载[^1] Counter 组件时，*组件函数*第一次执行`useState`函数，执行后 React 给相对应的组件注册一个`useState`hook，并初始化 state；useState 最后返回当前 state 的值，以及一个对 state 进行更改的 `setState` 函数。函数组件在最后返回的 jsx 将 `setState` 绑定到 button 的点击事件中。当用户点击 button 时，setState 触发重新渲染（rerender），React 再一次执行了这个*组件函数*，执行过程中再一次运行`useState`函数，更新 state，并返回最新的值，React 将其填充到 jsx 中，最后更新视图。
 整个过程最重要的其实就一点：**每次用 `setState` 更改状态的时候，React 都会重新执行整个组件函数**。
 
 ## 为什么不要在条件判断中使用 hook
@@ -244,3 +244,5 @@ function Counter({ isFancy }) {
 ## 总结
 
 其实这三个问题最后都可以归结为“React 如何比较重复执行组件函数的不同结果”，如果没有标识符 key，React 就只能根据顺序去识别不同的 hooks 和组件。无论 React 框架底层细节是如何实现的，只要 React 遵循*每次渲染时都执行一遍组件函数来生成 UI 结果，而非把它当成一种初始化模板*的做法，那就肯定会出现这些问题。
+
+[^1]: 这里的挂载指的是 React 将元素添加到虚拟 dom 上；下文的重新渲染（rerender）则是指 React 在状态更新后重新计算虚拟 dom 的过程
