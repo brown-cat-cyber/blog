@@ -246,25 +246,4 @@ function Counter({ isFancy }) {
 其实这三个问题最后都可以归结为“React 如何比较重复执行组件函数的不同结果”，如果没有标识符 key，React 就只能根据顺序去识别不同的 hooks 和组件。无论 React 框架底层细节是如何实现的，只要 React 遵循*每次渲染时都执行一遍组件函数来生成 UI 结果，而非把它当成一种初始化模板*的做法，那就肯定会出现这些问题。
 
 [^1]: 这里的挂载指的是 React 将组件添加到虚拟 dom 上；下文的重新渲染（rerender）则是指 React 在状态更新后重新计算虚拟 dom 的过程
-[^2]: React 官方教程中有一个看起来和本文结论冲突的[例子](https://react.dev/learn/preserving-and-resetting-state#option-1-rendering-a-component-in-different-positions)，例子中两个 Counter 看上去在同样的位置却并不共享同一个状态，这是因为，Scoreboard 执行的结果实际上是这样的：
-
-```javascript
-export default function Scoreboard() {
-  const [isPlayerA, setIsPlayerA] = useState(true);
-  return (
-    <div>
-      {false}
-      {true && <Counter person="Sarah" />}
-      <button
-        onClick={() => {
-          setIsPlayerA(!isPlayerA);
-        }}
-      >
-        Next player!
-      </button>
-    </div>
-  );
-}
-```
-
-只是 React 帮你处理掉了 false 而已
+[^2]: React 官方教程中有一个看起来和本文结论冲突的[例子](https://react.dev/learn/preserving-and-resetting-state#option-1-rendering-a-component-in-different-positions)，例子中两个 Counter 看上去在同样的位置却并不共享同一个状态，这是因为，其中一个语句的结果是`{false}`，仍然占用一个位置，只是 React 帮你处理掉了而已。
