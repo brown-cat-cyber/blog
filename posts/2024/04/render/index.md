@@ -8,7 +8,7 @@
 2. React 会保留相同位置相同类型的组件的状态
 3. 为什么数组遍历需要 key 属性
 
-刚开始学习的时候，我只是盲目地遵从着 eslint 的报错提示，心里觉得很生硬；等熟悉 React 后，我才明白了它们的原因。接下来我将尝试分别解释这三条规则的必要性，而到最后，大家将会明白它们都是因 React 的渲染机制而起。解释过程中我并不会引入 iber 以及更底层的 React 技术细节概念，因为一是我希望文章总是能被更多人阅读，尽量保持简洁，降低门槛。二是我觉得底层实现细节和这些规则实际上并没有直接关系，引入它们反而会制造噪音。对于想要了解更多（乃至从头实现一个 React）的朋友，我在文章结尾给出了一些我搜集到的拓展阅读。
+刚开始学习的时候，我只是盲目地遵从着 eslint 的报错提示，心里觉得很生硬；等熟悉 React 后，我才明白了它们的原因。接下来我将尝试分别解释这三条规则的必要性，而到最后，大家将会明白它们都是因 React 的渲染机制而起。解释过程中我并不会引入 Fiber 以及更底层的 React 技术细节概念，因为一是我希望文章总是能被更多人阅读，尽量保持简洁，降低门槛。二是我觉得底层实现细节和这些规则实际上并没有直接关系，引入它们反而会制造噪音。对于想要了解更多（乃至从头实现一个 React）的朋友，我在文章结尾给出了一些我搜集到的拓展阅读。
 
 ## React 的渲染过程
 
@@ -248,7 +248,7 @@ function Counter({ isFancy }) {
 ## 拓展资料
 
 1. [掌握 React Reconciliation](https://www.youtube.com/watch?v=cyAbjx0mfKM&ab_channel=DeveloperWay)，用丰富的图片和动画展示 React Reconciliation。
-2. [搭建你自己的 React](https://pomb.us/build-your-own-react/)，从认识 JSX 开始搭建 React。
+2. [搭建你自己的 React](https://pomb.us/build-your-own-react/)，从认识 JSX 开始搭建 React。有[中文翻译](https://github.com/chinanf-boy/didact-explain#5-fibre-%E9%80%92%E5%A2%9E%E5%AF%B9%E6%AF%94)，但没有更新 Hooks 篇。
 3. [深入 React Hooks 和 Fiber](https://dev.to/mattia/react-hooks-and-fiber-deep-diving-gi1)，通过对源码的调试更深入地解析 React 重新渲染的过程。
 
 [^1]: 这里的*挂载（mount）*指的是 React 将组件添加到虚拟 dom 上；下文的*重新渲染（rerender）*则是指 React 在状态更新后重新计算虚拟 dom 的过程
