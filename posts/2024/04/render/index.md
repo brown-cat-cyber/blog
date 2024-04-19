@@ -42,7 +42,9 @@ export default function Counter() {
 记住这点后，那首先来思考第一条规则——为什么不要在条件判断中使用 hook？
 要回答这个问题，我们首先要明白，hook 的作用是什么？hook 首先是函数，回顾对 React 渲染过程的描述，我们在**执行组件函数**的过程中，**调用了`useState`这个 hook 函数**；随后在 rerender 的过程中, React **再次执行**了组件函数，**并再次调用 `useState`**拿到了更新后的状态。
 所以关键在于，每一次触发 rerender，我们都会重新执行一遍组件函数，**组件函数的执行结果也就是 rerender 的结果**。
+
 那如果从函数的执行角度来讲，前一次和后一次函数的执行结果分别是什么呢？React 看到了什么？
+
 假设我们有这样一个表单组件([摘自 React 官方教程](https://React.dev/learn/choosing-the-state-structure#avoid-redundant-state))
 
 ```javascript
@@ -161,6 +163,7 @@ export default function Form() {
 
 从这个视角看，在条件判断中使用 hook 带来的问题就呼之欲出了：请问调用这唯一的`useState`获取的是代表"firstName"的那个状态，还是代表"lastName"的那个状态？我们没有办法判断，我们只看到了一个 useState。
 不仅仅有这个限制，[官方文档](https://React.dev/reference/rules/rules-of-Hooks)还列出了诸如不要在循环、嵌套函数、try/catch 代码块中使用 Hooks 的规则，这些规则被归纳为“仅在顶层调用 hooks”。它们的原因都是类似的：**在多次函数执行中，区分 Hooks 的唯一办法就是它们的调用顺序，因此要避免一切 _有可能_ 打乱顺序的行为**。
+
 这里提一下，我在写这篇文章的时候查询了一些资料，其中很多都有一个大概这样的总结“因为 React 用一个链表（自制 React 则多用数组）来储存 Hooks 的状态，所以必须要保证它的调用顺序与链表/数组中的排序一致”。这个说法不能说错，但我觉得可能过于聚焦于技术细节了。**问题不是 React 用什么数据结构去储存 hooks，问题在于，只要 React 每当状态变更就重新执行一遍组件函数，只要每次执行函数都会重新调用一遍 hooks，那在没有 key、id 等标识符的情况下，React 就只能凭借在函数中的调用顺序去辨认不同的 hooks。**
 这里提到了 key ，这也是另外两个问题的关键。
 
@@ -241,11 +244,13 @@ function Counter({ isFancy }) {
 ```
 
 当 React 看到返回的这两个 JSX 时，它同样没法判断这还是不是同一个 counter[^2]。但这个时候 React 多了另一个信息——它们的 _组件名_ 是相同的。**出于性能考虑，React 会默认这还是同一个组件，这样就可以仅更新这个组件的属性而非重新挂载这个组件。**（在这个案例中， React 计算以及提交虚拟 dom 时，仅需浏览器更新 div 的 class，而非删除掉这个 div 后再重新创建并添加一个 div）
+
 那如何让 React 认识到这并不是同一个组件呢？这就是 key 属性的作用，它作为组件的唯一标识，类似于数据库中的 id。有了它，React 就不用再借助位置、名称类型来判断组件的同一性了，所以我们可以[通过设置不同的 key 来重制掉同一类型同一位置组件的状态](https://react.dev/learn/preserving-and-resetting-state#option-2-resetting-state-with-a-key)。
 
 ## 为什么 React 会要求开发者给 JSX 中的数组项加上 key 属性
 
 有了前面的铺垫，我们就可以很顺利地解释第三个规则——为什么 React 会要求开发者给 JSX 中的数组项加上 key 属性？
+
 因为相比于其它固定的代码，用来 map 的数组在 JSX 中是一个非常不稳定的结构，它随时有可能受 state 和 prop 的影响而增减数组项，因此数组项的顺序（index）在数组中并不是一个稳定的标识。这个时候，**React 为了避免重复挂载数组项，就必须要有一个唯一而稳定的标识去区分它们，将它们与上一次快照中的数组项一一对应。**（所以为什么不能把 index 作为 key 呢？因为这样你等于没有告诉 React 任何新的信息啊，React 不需要你告诉它 index，它看得出来……）
 
 ## 总结
